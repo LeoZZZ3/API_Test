@@ -19,7 +19,7 @@
     <script>
         const productsList = document.getElementById('products-list');
 
-        fetch('http://127.0.0.1:5001/')
+        fetch('http://127.0.0.1:5001/api/users')
             .then(response => response.json())
             .then(products => {
                 products.forEach(product => {
