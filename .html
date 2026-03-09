@@ -30,7 +30,7 @@
         const usersList = document.getElementById('users-list');
 
         // Appel à ton API Flask locale
-        fetch('http://127.0.0.1:5001/api/users')
+        fetch('http://127.0.0.1:5001')
             .then(response => {
                 if (!response.ok) throw new Error("Erreur réseau");
                 return response.json();
