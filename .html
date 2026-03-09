@@ -3,40 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fake Store API</title>
+    <title>Clients SQL</title>
     <style>
-        /* Un petit peu de style pour y voir clair */
-        #products-list { display: flex; flex-wrap: wrap; gap: 20px; }
-        .product-card { border: 1px solid #ddd; padding: 10px; width: 200px; border-radius: 8px; }
+        #users-list { display: flex; flex-wrap: wrap; gap: 20px; }
+        .user-card { border: 1px solid #ddd; padding: 10px; width: 200px; border-radius: 8px; }
     </style>
 </head>
 <body>
     <section>
-        <h2>Produits de la Fake Store API</h2>
-        <div id="products-list"></div>
+        <h2>Clients de la base SQL</h2>
+        <div id="users-list"></div>
     </section>
 
     <script>
-        const productsList = document.getElementById('products-list');
+        const usersList = document.getElementById('users-list');
 
         fetch('http://127.0.0.1:5001/api/users')
             .then(response => response.json())
-            .then(products => {
-                products.forEach(product => {
-                    const productElement = document.createElement('div');
-                    productElement.classList.add('product-card'); // Optionnel : pour le style
-                    
-                    // Utilisation des backticks ( ` ) pour le template literal
-                    productElement.innerHTML = `
-                        <h3>${product.title}</h3>
-                        <p>${product.price} $</p>
-                        <img src="${product.image}" alt="${product.title}" width="100">
+            .then(users => {
+                users.forEach(user => {
+                    const userElement = document.createElement('div');
+                    userElement.classList.add('user-card');
+
+                    userElement.innerHTML = `
+                        <h3>${user[1]}</h3>
+                        <p>ID : ${user[0]}</p>
+                        <p>Âge : ${user[2]}</p>
                     `;
-                    
-                    productsList.appendChild(productElement);
+
+                    usersList.appendChild(userElement);
                 });
             })
-            .catch(error => console.error('Erreur lors du fetch:', error));
+            .catch(error => console.error('Erreur lors du fetch :', error));
     </script>
 </body>
 </html>
