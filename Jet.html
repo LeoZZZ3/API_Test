@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clients SQL</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6fb;
+      margin: 0;
+      padding: 40px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    #users-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .user-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .user-card h3 {
+      margin-top: 0;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Liste des clients</h1>
+  <div id="users-list"></div>
+
+  <script>
+    const usersList = document.getElementById("users-list");
+
+    fetch("http://127.0.0.1:5001/api/users")
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Erreur HTTP : " + response.status);
+        }
+        return response.json();
+      })
+      .then(users => {
+        usersList.innerHTML = "";
+
+        users.forEach(user => {
+          const card = document.createElement("div");
+          card.classList.add("user-card");
+
+          card.innerHTML = `
+            <h3>${user[2]} ${user[1]}</h3>
+            <p><b>ID :</b> ${user[0]}</p>
+            <p><b>Téléphone :</b> ${user[3]}</p>
+            <p><b>Email :</b> ${user[4]}</p>
+            <p><b>Actif :</b> ${user[5] == 1 ? "Oui" : "Non"}</p>
+          `;
+
+          usersList.appendChild(card);
+        });
+      })
+      .catch(error => {
+        console.error("Erreur fetch :", error);
+        usersList.innerHTML = `<p class="error">Impossible de charger les clients.</p>`;
+      });
+  </script>
+
+</body>
+</html>

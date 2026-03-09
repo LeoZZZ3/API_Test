@@ -4,24 +4,17 @@ from flask_cors import CORS
 from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 
-app = Flask(__name__)
-CORS(app)
-
 load_dotenv()
 
 app = Flask(__name__)
-
-
+CORS(app)
 
 @app.route('/', methods=['GET'])
 def index():
-    return "<button> Bienvenue à l'API de Léo </button>"
-
-
+    return "<button>Bienvenue à l'API de Léo</button>"
 
 @app.route('/api/hello', methods=['GET'])
 def hello():
-    """Returns a greeting message"""
     return jsonify({
         'message': 'Hello, World!',
         'status': 'success'
@@ -29,22 +22,20 @@ def hello():
 
 @app.route('/api/users', methods=['GET'])
 def get_users():
-    # Connection à la base de données MySQL
     mydb = mysql.connector.connect(
-    host=os.getenv("DB_HOST"),
-    user=os.getenv("DB_USER"),
-    password=os.getenv("DB_PASSWORD"),
-    database=os.getenv("DB_NAME")
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME")
     )
+
     mycursor = mydb.cursor()
-
-    # Exécution de la requête SQL pour récupérer les utilisateurs
     mycursor.execute("SELECT * FROM clients")
-
-    # Récupération des résultats de la requête
     myresult = mycursor.fetchall()
-   
-    """Returns a list of users"""
+
+    mycursor.close()
+    mydb.close()
+
     return jsonify(myresult)
 
 @app.route('/api/add_user', methods=['GET', 'POST'])
@@ -61,8 +52,6 @@ def add_user():
         "name": name,
         "age": age
     })
-
-   
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5001))
