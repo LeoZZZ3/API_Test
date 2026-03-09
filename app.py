@@ -1,7 +1,10 @@
 import os
 import mysql.connector
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -9,7 +12,7 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def index():
-    return "<button> Bienvenue </button>"
+    return "<button> Bienvenue à l'API de Léo </button>"
 
 
 
@@ -25,10 +28,10 @@ def hello():
 def get_users():
     # Connection à la base de données MySQL
     mydb = mysql.connector.connect(
-        host="mysql-berke.alwaysdata.net",
-        user="berke_jetski",
-        password="Jetski567@",
-        database="berke_jetski"
+    host=os.getenv("DB_HOST"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD"),
+    database=os.getenv("DB_NAME")
     )
     mycursor = mydb.cursor()
 
@@ -37,11 +40,26 @@ def get_users():
 
     # Récupération des résultats de la requête
     myresult = mycursor.fetchall()
-
-
-
+   
     """Returns a list of users"""
     return jsonify(myresult)
+
+@app.route('/api/add_user', methods=['GET', 'POST'])
+def add_user():
+    if request.method == 'GET':
+        return "Cette route attend une requête POST"
+
+    data = request.json
+    name = data.get("name")
+    age = data.get("age")
+
+    return jsonify({
+        "message": "Utilisateur reçu",
+        "name": name,
+        "age": age
+    })
+
+   
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5001))
