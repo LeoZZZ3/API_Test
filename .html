@@ -3,40 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fake Store API</title>
+    <title>JetSki Rental - Administration</title>
     <style>
-        /* Un petit peu de style pour y voir clair */
-        #products-list { display: flex; flex-wrap: wrap; gap: 20px; }
-        .product-card { border: 1px solid #ddd; padding: 10px; width: 200px; border-radius: 8px; }
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; padding: 20px; }
+        h2 { color: #0077be; }
+        #users-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .user-card { 
+            background: white; 
+            border-left: 5px solid #0077be; 
+            padding: 15px; 
+            border-radius: 5px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+        }
+        .user-card b { color: #333; }
     </style>
 </head>
 <body>
+
     <section>
-        <h2>Produits de la Fake Store API</h2>
-        <div id="products-list"></div>
+        <h2>Liste des Clients (Location JetSki)</h2>
+        <div id="users-list">
+            </div>
     </section>
 
     <script>
-        const productsList = document.getElementById('products-list');
+        const usersList = document.getElementById('users-list');
 
+        // Appel à ton API Flask locale
         fetch('http://127.0.0.1:5001/api/users')
-            .then(response => response.json())
-            .then(products => {
-                products.forEach(product => {
-                    const productElement = document.createElement('div');
-                    productElement.classList.add('product-card'); // Optionnel : pour le style
+            .then(response => {
+                if (!response.ok) throw new Error("Erreur réseau");
+                return response.json();
+            })
+            .then(users => {
+                // Nettoyer la liste avant d'ajouter
+                usersList.innerHTML = '';
+
+                users.forEach(user => {
+                    const userElement = document.createElement('div');
+                    userElement.classList.add('user-card');
                     
-                    // Utilisation des backticks ( ` ) pour le template literal
-                    productElement.innerHTML = `
-                        <h3>${product.title}</h3>
-                        <p>${product.price} $</p>
-                        <img src="${product.image}" alt="${product.title}" width="100">
+                    /* ATTENTION : Comme le Python renvoie un tuple (SELECT *), 
+                       on accède aux données par index :
+                       user[0] = ID, user[1] = Nom, user[2] = Age (selon ta table)
+                    */
+                    userElement.innerHTML = `
+                        <p><strong>Client ID :</strong> #${user[0]}</p>
+                        <p><strong>Nom :</strong> ${user[1]}</p>
+                        <p><strong>Détails :</strong> ${user[2] || 'N/A'}</p>
                     `;
                     
-                    productsList.appendChild(productElement);
+                    usersList.appendChild(userElement);
                 });
             })
-            .catch(error => console.error('Erreur lors du fetch:', error));
+            .catch(error => {
+                console.error('Erreur:', error);
+                usersList.innerHTML = `<p style="color:red">Impossible de charger les données. Vérifiez que Flask est lancé et que le CORS est autorisé.</p>`;
+            });
     </script>
 </body>
 </html>
