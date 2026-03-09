@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake Store API</title>
+    <style>
+        /* Un petit peu de style pour y voir clair */
+        #products-list { display: flex; flex-wrap: wrap; gap: 20px; }
+        .product-card { border: 1px solid #ddd; padding: 10px; width: 200px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <section>
+        <h2>Produits de la Fake Store API</h2>
+        <div id="products-list"></div>
+    </section>
+
+    <script>
+        const productsList = document.getElementById('products-list');
+
+        fetch('http://127.0.0.1:5001/')
+            .then(response => response.json())
+            .then(products => {
+                products.forEach(product => {
+                    const productElement = document.createElement('div');
+                    productElement.classList.add('product-card'); // Optionnel : pour le style
+                    
+                    // Utilisation des backticks ( ` ) pour le template literal
+                    productElement.innerHTML = `
+                        <h3>${product.title}</h3>
+                        <p>${product.price} $</p>
+                        <img src="${product.image}" alt="${product.title}" width="100">
+                    `;
+                    
+                    productsList.appendChild(productElement);
+                });
+            })
+            .catch(error => console.error('Erreur lors du fetch:', error));
+    </script>
+</body>
+</html>
