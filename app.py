@@ -3,12 +3,19 @@ import mysql.connector
 from flask_cors import CORS
 from flask import Flask, jsonify, request
 from dotenv import load_dotenv
+from database import ORM  
 
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
+orm = ORM(
+    host=os.getenv("DB_HOST"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD"),
+    database=os.getenv("DB_NAME")
+)
 
 def get_db_connection():
     return mysql.connector.connect(
