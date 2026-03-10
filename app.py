@@ -1,8 +1,9 @@
 import os
-from flask_cors import CORS
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from dotenv import load_dotenv
 from ORM import ORM
+from client import Client
 
 load_dotenv()
 
@@ -15,6 +16,8 @@ orm = ORM(
     password=os.getenv("DB_PASSWORD"),
     database=os.getenv("DB_NAME")
 )
+
+client_model = Client(orm)
 
 @app.route('/', methods=['GET'])
 def index():
@@ -34,7 +37,7 @@ def get_api_users():
 
 @app.route('/users', methods=['GET'])
 def get_users():
-    users = orm.select_all("clients")
+    users = client_model.get_all()
     return jsonify(users)
 
 @app.route('/users', methods=['POST'])
@@ -61,7 +64,7 @@ def create_user():
         "a_permis_bateau": a_permis_bateau
     }
 
-    inserted_id = orm.insert("clients", new_user)
+    inserted_id = client_model.create(new_user)
 
     return jsonify({
         "message": "Client ajouté avec succès",
@@ -92,7 +95,7 @@ def update_user(user_id):
         "a_permis_bateau": a_permis_bateau
     }
 
-    rows_affected = orm.update("clients", updated_data, user_id, id_column="id_client")
+    rows_affected = client_model.update(user_id, updated_data)
 
     if rows_affected == 0:
         return jsonify({"error": f"Aucun client trouvé avec l'id {user_id}"}), 404
@@ -101,7 +104,7 @@ def update_user(user_id):
 
 @app.route('/users/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
-    rows_affected = orm.delete("clients", user_id, id_column="id_client")
+    rows_affected = client_model.delete(user_id)
 
     if rows_affected == 0:
         return jsonify({"error": f"Aucun client trouvé avec l'id {user_id}"}), 404

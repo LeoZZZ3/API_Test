@@ -3,10 +3,10 @@ import mysql.connector
 class ORM:
     def __init__(self, host, user, password, database):
         self.config = {
-            'host': host,
-            'user': user,
-            'password': password,
-            'database': database
+            "host": host,
+            "user": user,
+            "password": password,
+            "database": database
         }
 
     def _get_connection(self):
