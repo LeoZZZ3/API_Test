@@ -123,7 +123,6 @@ def update_user(user_id):
 
     return jsonify({"message": f"Client {user_id} mis à jour avec succès"})
 
-
 @app.route('/users/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
     mydb = get_db_connection()
