@@ -96,25 +96,32 @@ def update_user(user_id):
     if not data:
         return jsonify({"error": "Aucune donnée JSON envoyée"}), 400
 
-    name = data.get("name")
+    nom = data.get("nom")
+    prenom = data.get("prenom")
+    telephone = data.get("telephone")
     email = data.get("email")
+    a_permis_bateau = data.get("a_permis_bateau", 0)
 
-    if not name or not email:
-        return jsonify({"error": "name et email sont obligatoires"}), 400
+    if not nom or not prenom or not telephone or not email:
+        return jsonify({"error": "nom, prenom, telephone et email sont obligatoires"}), 400
 
     mydb = get_db_connection()
     mycursor = mydb.cursor()
 
     mycursor.execute(
-        "UPDATE clients SET name = %s, email = %s WHERE id = %s",
-        (name, email, user_id)
+        """
+        UPDATE clients
+        SET nom = %s, prenom = %s, telephone = %s, email = %s, a_permis_bateau = %s
+        WHERE id_client = %s
+        """,
+        (nom, prenom, telephone, email, a_permis_bateau, user_id)
     )
     mydb.commit()
 
     mycursor.close()
     mydb.close()
 
-    return jsonify({"message": f"User with id {user_id} updated successfully!"})
+    return jsonify({"message": f"Client {user_id} mis à jour avec succès"})
 
 
 @app.route('/users/<int:user_id>', methods=['DELETE'])
@@ -122,13 +129,13 @@ def delete_user(user_id):
     mydb = get_db_connection()
     mycursor = mydb.cursor()
 
-    mycursor.execute("DELETE FROM clients WHERE id = %s", (user_id,))
+    mycursor.execute("DELETE FROM clients WHERE id_client = %s", (user_id,))
     mydb.commit()
 
     mycursor.close()
     mydb.close()
 
-    return jsonify({"message": f"User with id {user_id} deleted successfully!"})
+    return jsonify({"message": f"Client avec id {user_id} supprime avec succes"})
 
 
 if __name__ == '__main__':
