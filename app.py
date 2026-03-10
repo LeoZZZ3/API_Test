@@ -65,25 +65,28 @@ def create_user():
     if not data:
         return jsonify({"error": "Aucune donnée JSON envoyée"}), 400
 
-    name = data.get("name")
+    prenom = data.get("prenom")
+    nom = data.get("nom")
+    telephone = data.get("telephone")
     email = data.get("email")
 
-    if not name or not email:
-        return jsonify({"error": "name et email sont obligatoires"}), 400
+    if not prenom or not nom or not telephone or not email:
+        return jsonify({"error": "prenom, nom, telephone et email sont obligatoires"}), 400
 
     mydb = get_db_connection()
     mycursor = mydb.cursor()
 
     mycursor.execute(
-        "INSERT INTO clients (name, email) VALUES (%s, %s)",
-        (name, email)
+        "INSERT INTO clients (nom, prenom, telephone, email) VALUES (%s,%s,%s,%s)",
+        (nom, prenom, telephone, email)
     )
+
     mydb.commit()
 
     mycursor.close()
     mydb.close()
 
-    return jsonify({"message": f"User {name} created successfully!"}), 201
+    return jsonify({"message": "Client ajouté avec succès"})
 
 
 @app.route('/users/<int:user_id>', methods=['PUT'])
