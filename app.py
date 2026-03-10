@@ -9,9 +9,20 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
+
+def get_db_connection():
+    return mysql.connector.connect(
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME")
+    )
+
+
 @app.route('/', methods=['GET'])
 def index():
     return "<button>Bienvenue à l'API de Léo</button>"
+
 
 @app.route('/api/hello', methods=['GET'])
 def hello():
@@ -20,15 +31,10 @@ def hello():
         'status': 'success'
     })
 
-@app.route('/api/users', methods=['GET'])
-def get_users():
-    mydb = mysql.connector.connect(
-        host=os.getenv("DB_HOST"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        database=os.getenv("DB_NAME")
-    )
 
+@app.route('/api/users', methods=['GET'])
+def get_api_users():
+    mydb = get_db_connection()
     mycursor = mydb.cursor()
     mycursor.execute("SELECT * FROM clients")
     myresult = mycursor.fetchall()
@@ -38,20 +44,89 @@ def get_users():
 
     return jsonify(myresult)
 
-@app.route('/api/add_user', methods=['GET', 'POST'])
-def add_user():
-    if request.method == 'GET':
-        return "Cette route attend une requête POST"
 
-    data = request.json
+@app.route('/users', methods=['GET'])
+def get_users():
+    mydb = get_db_connection()
+    mycursor = mydb.cursor()
+    mycursor.execute("SELECT * FROM clients")
+    myresult = mycursor.fetchall()
+
+    mycursor.close()
+    mydb.close()
+
+    return jsonify(myresult)
+
+
+@app.route('/users', methods=['POST'])
+def create_user():
+    data = request.get_json()
+
+    if not data:
+        return jsonify({"error": "Aucune donnée JSON envoyée"}), 400
+
     name = data.get("name")
-    age = data.get("age")
+    email = data.get("email")
 
-    return jsonify({
-        "message": "Utilisateur reçu",
-        "name": name,
-        "age": age
-    })
+    if not name or not email:
+        return jsonify({"error": "name et email sont obligatoires"}), 400
+
+    mydb = get_db_connection()
+    mycursor = mydb.cursor()
+
+    mycursor.execute(
+        "INSERT INTO clients (name, email) VALUES (%s, %s)",
+        (name, email)
+    )
+    mydb.commit()
+
+    mycursor.close()
+    mydb.close()
+
+    return jsonify({"message": f"User {name} created successfully!"}), 201
+
+
+@app.route('/users/<int:user_id>', methods=['PUT'])
+def update_user(user_id):
+    data = request.get_json()
+
+    if not data:
+        return jsonify({"error": "Aucune donnée JSON envoyée"}), 400
+
+    name = data.get("name")
+    email = data.get("email")
+
+    if not name or not email:
+        return jsonify({"error": "name et email sont obligatoires"}), 400
+
+    mydb = get_db_connection()
+    mycursor = mydb.cursor()
+
+    mycursor.execute(
+        "UPDATE clients SET name = %s, email = %s WHERE id = %s",
+        (name, email, user_id)
+    )
+    mydb.commit()
+
+    mycursor.close()
+    mydb.close()
+
+    return jsonify({"message": f"User with id {user_id} updated successfully!"})
+
+
+@app.route('/users/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    mydb = get_db_connection()
+    mycursor = mydb.cursor()
+
+    mycursor.execute("DELETE FROM clients WHERE id = %s", (user_id,))
+    mydb.commit()
+
+    mycursor.close()
+    mydb.close()
+
+    return jsonify({"message": f"User with id {user_id} deleted successfully!"})
+
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5001))
