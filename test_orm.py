@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from database import ORM
+from ORM import ORM
 
 # 1. Charger les variables d'environnement
 load_dotenv()

@@ -3,7 +3,7 @@ import mysql.connector
 from flask_cors import CORS
 from flask import Flask, jsonify, request
 from dotenv import load_dotenv
-from database import ORM  
+from ORM import ORM  
 
 load_dotenv()
 
