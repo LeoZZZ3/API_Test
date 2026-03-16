@@ -4,7 +4,10 @@ from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 from ORM import ORM
 
-from models import Client, ModeleJetski, Reservation, Tarif
+from entities.client import Client
+from entities.jetski import ModeleJetski
+from entities.reservation import Reservation
+from entities.tarif import Tarif
 
 load_dotenv()
 
