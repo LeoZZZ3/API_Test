@@ -1,6 +1,7 @@
 import mysql.connector
+from base_orm import BaseORM 
 
-class ORM:
+class ORM(BaseORM): 
     def __init__(self, host, user, password, database):
         self.config = {
             'host': host,

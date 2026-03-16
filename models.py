@@ -1,16 +1,14 @@
 class Client:
-    def __init__(self, id_client, nom, prenom, telephone, email, a_permis_bateau, created_at):
+    def __init__(self, id_client, nom, prenom, telephone, email, a_permis_bateau, created_at=None):
         self.id_client = id_client
         self.nom = nom
         self.prenom = prenom
-        self.telephone = telephone
-        self.email = email
-        self.a_permis_bateau = a_permis_bateau
-        self.created_at = created_at
-
+        # ... etc
+        
     @staticmethod
-    def from_tuple(row):
-        return Client(*row) if row else None
+    def from_dict(data):
+        # On utilise ** pour passer le dictionnaire aux arguments du __init__
+        return Client(**data) if data else None
 
     def to_dict(self):
         return vars(self)
