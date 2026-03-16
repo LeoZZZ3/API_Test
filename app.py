@@ -4,6 +4,8 @@ from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 from ORM import ORM
 
+from models import Client, ModeleJetski, Reservation, Tarif
+
 load_dotenv()
 
 app = Flask(__name__)
