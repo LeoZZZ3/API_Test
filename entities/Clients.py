@@ -1,9 +1,9 @@
 class Clients:
     def __init__ (self, id_client, prenom, nom, email, telephone, a_permis_bateau, created_at):
         self.__id_client = id_client
-        self.__nom = nom
-        self.__prenom = prenom
-        self.__telephone = telephone
+        self.nom = nom
+        self.prenom = prenom
+        self.telephone = telephone
         self.__email = email
         self.__a_permis_bateau = a_permis_bateau
         self.__created_at = created_at 

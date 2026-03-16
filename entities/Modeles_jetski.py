@@ -8,5 +8,5 @@ class ModeleJetski:
         self.permis_requis = permis_requis
         self.caution = caution
         self.description = description
-        self.stock_total = stock_total
-        self.created_at = created_at
+        self.__stock_total = stock_total
+        self.__created_at = created_at
